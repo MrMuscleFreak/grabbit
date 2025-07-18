@@ -1,13 +1,40 @@
 {
-  "name": "multimedia-tools-react",
-  "private": true,
+  "name": "grabbit",
+  "private": false,
   "version": "0.0.0",
   "type": "module",
+  "description": "An Electron-based application built with React, TypeScript, and Vite",
+  "author": "Klaus",
+  "license": "MIT",
+  "homepage": "https://github.com/MrMuscleFreak/grabbit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrMuscleFreak/grabbit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MrMuscleFreak/grabbit/issues"
+  },
+  "keywords": [
+    "electron",
+    "react",
+    "typescript",
+    "vite",
+    "desktop-app"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
+    "build:dir": "npm run build -- --dir",
+    "build:win": "npm run build -- --win",
+    "build:mac": "npm run build -- --mac",
+    "build:linux": "npm run build -- --linux",
+    "electron": "electron .",
+    "electron:dev": "vite build && electron .",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
+    "preview": "vite preview",
+    "clean": "rm -rf dist dist-electron",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -29,5 +56,9 @@
     "vite-plugin-electron": "^0.28.6",
     "vite-plugin-electron-renderer": "^0.14.5"
   },
-  "main": "dist-electron/main.js"
+  "main": "dist-electron/main.js",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  }
 }
