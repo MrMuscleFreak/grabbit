@@ -13,13 +13,17 @@ let win;
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
-    width: 1280,
+    width: 1080,
+    // Example: Using 4:3 aspect ratio
     height: 720,
+    resizable: false,
     titleBarStyle: "hidden",
     trafficLightPosition: { x: 8, y: 8 },
     backgroundColor: "#fff",
     webPreferences: {
-      preload: path.join(__dirname, "preload.mjs")
+      preload: path.join(__dirname, "preload.mjs"),
+      nodeIntegration: true,
+      contextIsolation: false
     }
   });
   win.webContents.on("did-finish-load", () => {

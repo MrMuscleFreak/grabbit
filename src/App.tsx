@@ -1,8 +1,20 @@
+import Sidebar from './components/Sidebar';
+import { useState } from 'react';
+
 function App() {
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <>
-      <h1 className="text-7xl text-white font-bold underline">Hello world!</h1>
-    </>
+    <div>
+      <div className="flex">
+        <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <h1 className="text-3xl font-bold text-white p-4">Grabber</h1>
+      </div>
+    </div>
   );
 }
 
