@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaVideo } from 'react-icons/fa';
-import { RiPlayListFill } from 'react-icons/ri';
+import {
+  FaVideo,
+  FaInstagram,
+  FaTiktok,
+  FaSoundcloud,
+  FaImage,
+  FaDownload,
+} from 'react-icons/fa';
+import { MdAudiotrack } from 'react-icons/md';
+import { PiDotsThreeCircle } from 'react-icons/pi';
 import { LuSettings } from 'react-icons/lu';
-import { FaAngleLeft, FaYoutube } from 'react-icons/fa6';
+import { FaAngleLeft, FaYoutube, FaArrowRightArrowLeft } from 'react-icons/fa6';
 
 interface NavLink {
   name: string;
@@ -20,9 +28,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const [activeLink, setActiveLink] = useState('YouTube Video');
 
   const navLinks: NavLink[] = [
-    { name: 'YouTube', icon: FaYoutube, isSeparator: true },
-    { name: 'Video', icon: FaVideo },
-    { name: 'Playlist', icon: RiPlayListFill },
+    { name: 'Download Media', icon: FaDownload, isSeparator: true },
+    { name: 'YouTube', icon: FaYoutube },
+    { name: 'Instagram', icon: FaInstagram },
+    { name: 'TikTok', icon: FaTiktok },
+    { name: 'SoundCloud', icon: FaSoundcloud },
+    { name: 'Other', icon: PiDotsThreeCircle },
+    { name: 'Convert Media', icon: FaArrowRightArrowLeft, isSeparator: true },
+    { name: 'Images', icon: FaImage },
+    { name: 'Audios', icon: MdAudiotrack },
+    { name: 'Videos', icon: FaVideo },
   ];
   const settingsLink: NavLink = { name: 'Settings', icon: LuSettings };
 
@@ -39,12 +54,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
 
   return (
     <motion.aside
-      animate={{ width: isSidebarOpen ? 256 : 80 }} // w-64 : w-20
+      animate={{ width: isSidebarOpen ? 230 : 74 }} // w-64 : w-20
       transition={{
         duration: 0.2,
         ease: 'easeInOut',
       }}
-      className="h-[calc(100vh-32px)] bg-slate-800/50 border-r border-slate-700 p-3 flex flex-col "
+      className="h-[calc(100vh-32px)] bg-slate-800/50 border-r border-slate-700 p-4 flex flex-col "
     >
       {/* text and Toggle Button */}
       <div
@@ -92,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
             // seperator
             if (link.isSeparator) {
               return (
-                <li key={link.name} className="mt-2 first:mt-0 px-3 py-1">
+                <li key={link.name} className="first:mt-2 px-3 mt-8">
                   <div className="relative flex items-center justify-center h-8">
                     <Icon
                       className="text-slate-500"
@@ -117,12 +132,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
             }
             const isActive = activeLink === link.name;
             return (
-              <li key={link.name} className="mt-[4px] first:mt-0">
+              <li key={link.name} className="py-0.5 first:mt-0">
                 <a
                   href="#"
                   onClick={(e) => handleLinkClick(e, link.name)}
                   className={`
-                    flex items-center p-2 rounded-lg transition-colors duration-200 justify-start gap-2
+                    flex items-center p-2 rounded-lg transition-colors duration-200 justify-start gap-4
                     ${
                       isActive
                         ? 'bg-purple-600/30 font-semibold'
@@ -132,7 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                 >
                   <span
                     className="flex justify-center items-center"
-                    style={{ width: '2.5rem' }}
+                    style={{ width: '1.5rem' }}
                   >
                     <Icon
                       className={`transition-colors text-2xl ${
