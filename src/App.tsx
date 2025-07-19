@@ -43,15 +43,16 @@ function App() {
   };
 
   return (
-    <div>
-      <div className="flex">
-        <Sidebar
-          isSidebarOpen={isSidebarOpen}
-          toggleSidebar={toggleSidebar}
-          activeLink={activeLink}
-          setActiveLink={setActiveLink}
-        />
-        <h1 className="text-3xl font-bold text-white p-4">{renderContent()}</h1>
+    <div className="flex">
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        activeLink={activeLink}
+        setActiveLink={setActiveLink}
+      />
+      {/* <div className="flex-1 p-4">{renderContent()}</div> */}
+      <div className="flex-1 h-[calc(100vh-32px)] flex flex-col">
+        {renderContent()}
       </div>
     </div>
   );
