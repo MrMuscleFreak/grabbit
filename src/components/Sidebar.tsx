@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaVideo,
   FaInstagram,
   FaTiktok,
+  FaSpotify,
   FaSoundcloud,
   FaImage,
   FaDownload,
@@ -22,16 +22,22 @@ interface NavLink {
 interface SidebarProps {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
+  activeLink: string;
+  setActiveLink: (name: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
-  const [activeLink, setActiveLink] = useState('YouTube Video');
-
+const Sidebar: React.FC<SidebarProps> = ({
+  isSidebarOpen,
+  toggleSidebar,
+  activeLink,
+  setActiveLink,
+}) => {
   const navLinks: NavLink[] = [
     { name: 'Download Media', icon: FaDownload, isSeparator: true },
     { name: 'YouTube', icon: FaYoutube },
     { name: 'Instagram', icon: FaInstagram },
     { name: 'TikTok', icon: FaTiktok },
+    { name: 'Spotify', icon: FaSpotify },
     { name: 'SoundCloud', icon: FaSoundcloud },
     { name: 'Other', icon: PiDotsThreeCircle },
     { name: 'Convert Media', icon: FaArrowRightArrowLeft, isSeparator: true },
