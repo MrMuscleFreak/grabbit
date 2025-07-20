@@ -3,36 +3,40 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowRight, FaDownload } from 'react-icons/fa6';
 import { FaYoutube } from 'react-icons/fa';
 
-// Mock data for demonstration purposes
-const mockVideoDetails = {
-  thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg', // Placeholder image
-  title: 'Never Gonna Give You Up',
-  channel: 'Rick Astley',
+type VideoDetails = {
+  title: string;
+  channel: string;
+  thumbnail: string;
 };
 
 const YouTubeView = () => {
   const [url, setUrl] = useState('');
-  const [videoDetails, setVideoDetails] = useState<
-    typeof mockVideoDetails | null
-  >(null);
+  const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'video' | 'audio'>('video');
   const [selectedQuality, setSelectedQuality] = useState('best');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url.trim()) return;
 
     setIsLoading(true);
-    // Simulate fetching video data
-    setTimeout(() => {
-      setVideoDetails(mockVideoDetails);
-      setIsLoading(false);
-    }, 1500);
+    setVideoDetails(null); // Clear previous details before fetching new ones
+
+    // Call the main process to get video info using the URL
+    const result = await window.ipcRenderer.invoke('get-video-info', url);
+
+    if (result.success) {
+      setVideoDetails(result.details);
+    } else {
+      alert(`Error: ${result.error}`);
+      console.error(result.error);
+    }
+
+    setIsLoading(false);
   };
 
   const handleDownload = () => {
-    // This is where you would trigger the actual download logic
     console.log(`Downloading ${activeTab} (${selectedQuality}) from ${url}`);
     alert('Download started! (See console for details)');
   };

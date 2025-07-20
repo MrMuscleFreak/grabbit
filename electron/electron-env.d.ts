@@ -1,4 +1,13 @@
 /// <reference types="vite-plugin-electron/electron-env" />
+/// <reference types="vite/client" />
+
+import { IpcRenderer } from 'electron';
+
+declare global {
+  interface Window {
+    ipcRenderer: IpcRenderer;
+  }
+}
 
 declare namespace NodeJS {
   interface ProcessEnv {
@@ -15,13 +24,13 @@ declare namespace NodeJS {
      * │
      * ```
      */
-    APP_ROOT: string
+    APP_ROOT: string;
     /** /dist/ or /public/ */
-    VITE_PUBLIC: string
+    VITE_PUBLIC: string;
   }
 }
 
 // Used in Renderer process, expose in `preload.ts`
 interface Window {
-  ipcRenderer: import('electron').IpcRenderer
+  ipcRenderer: import('electron').IpcRenderer;
 }

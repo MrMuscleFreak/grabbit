@@ -1,0 +1,5 @@
+*.mp4
+*.zip
+*.exe
+bin/mac/ffmpeg
+bin/mac/yt-dl_macos

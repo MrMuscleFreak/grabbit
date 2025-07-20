@@ -1,7 +1,50 @@
-import { app, BrowserWindow } from "electron";
+import { ipcMain, app, BrowserWindow } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { execFile } from "node:child_process";
+function getBinaryPath(binaryName) {
+  const platform = process.platform;
+  let binaryFile = "";
+  if (platform === "win32") {
+    binaryFile = path.join("win", `${binaryName}.exe`);
+  } else if (platform === "darwin") {
+    const macBinaryName = "yt-dlp_macos";
+    binaryFile = path.join("mac", macBinaryName);
+  } else {
+    throw new Error(`Unsupported platform for binaries: ${platform}`);
+  }
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, "bin", binaryFile);
+  }
+  return path.join(app.getAppPath(), "bin", binaryFile);
+}
+ipcMain.handle("get-video-info", async (_, url) => {
+  const ytdlpPath = getBinaryPath("yt-dlp");
+  const args = ["--dump-json", url];
+  console.log(`Fetching info for: ${url} using ${ytdlpPath}`);
+  return new Promise((resolve) => {
+    execFile(ytdlpPath, args, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`yt-dlp error: ${stderr}`);
+        resolve({ success: false, error: "Failed to fetch video info." });
+        return;
+      }
+      try {
+        const data = JSON.parse(stdout);
+        const videoDetails = {
+          thumbnail: data.thumbnail,
+          title: data.title,
+          channel: data.channel
+        };
+        resolve({ success: true, details: videoDetails });
+      } catch (e) {
+        console.error("Failed to parse yt-dlp output:", e);
+        resolve({ success: false, error: "Could not parse video data." });
+      }
+    });
+  });
+});
 createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path.join(__dirname, "..");
@@ -22,8 +65,8 @@ function createWindow() {
     backgroundColor: "#fff",
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: false,
+      contextIsolation: true
     }
   });
   win.webContents.on("did-finish-load", () => {
