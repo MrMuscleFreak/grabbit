@@ -2,58 +2,9 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { execFile } from 'node:child_process';
+import { registerYouTubeHandlers } from './services/youtubeService';
 
-function getBinaryPath(binaryName: 'yt-dlp' | 'ffmpeg'): string {
-  const platform = process.platform;
-  let binaryFile = '';
-
-  if (platform === 'win32') {
-    binaryFile = path.join('win', `${binaryName}.exe`);
-  } else if (platform === 'darwin') {
-    // macOS
-    const macBinaryName = binaryName === 'yt-dlp' ? 'yt-dlp_macos' : binaryName;
-    binaryFile = path.join('mac', macBinaryName);
-  } else {
-    throw new Error(`Unsupported platform for binaries: ${platform}`);
-  }
-
-  if (app.isPackaged) {
-    return path.join(process.resourcesPath, 'bin', binaryFile);
-  }
-
-  // In development, binaries are in the projects root /bin folder
-  return path.join(app.getAppPath(), 'bin', binaryFile);
-}
-
-ipcMain.handle('get-video-info', async (_, url: string) => {
-  const ytdlpPath = getBinaryPath('yt-dlp');
-  const args = ['--dump-json', url]; // Get all metadata as a single JSON object
-
-  console.log(`Fetching info for: ${url} using ${ytdlpPath}`);
-
-  return new Promise((resolve) => {
-    execFile(ytdlpPath, args, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`yt-dlp error: ${stderr}`);
-        resolve({ success: false, error: 'Failed to fetch video info.' });
-        return;
-      }
-      try {
-        const data = JSON.parse(stdout);
-        const videoDetails = {
-          thumbnail: data.thumbnail,
-          title: data.title,
-          channel: data.channel,
-        };
-        resolve({ success: true, details: videoDetails });
-      } catch (e) {
-        console.error('Failed to parse yt-dlp output:', e);
-        resolve({ success: false, error: 'Could not parse video data.' });
-      }
-    });
-  });
-});
+registerYouTubeHandlers(ipcMain);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const require = createRequire(import.meta.url);

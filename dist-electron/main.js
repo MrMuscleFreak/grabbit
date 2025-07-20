@@ -1,4 +1,4 @@
-import { ipcMain, app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -19,32 +19,34 @@ function getBinaryPath(binaryName) {
   }
   return path.join(app.getAppPath(), "bin", binaryFile);
 }
-ipcMain.handle("get-video-info", async (_, url) => {
-  const ytdlpPath = getBinaryPath("yt-dlp");
-  const args = ["--dump-json", url];
-  console.log(`Fetching info for: ${url} using ${ytdlpPath}`);
-  return new Promise((resolve) => {
-    execFile(ytdlpPath, args, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`yt-dlp error: ${stderr}`);
-        resolve({ success: false, error: "Failed to fetch video info." });
-        return;
-      }
-      try {
-        const data = JSON.parse(stdout);
-        const videoDetails = {
-          thumbnail: data.thumbnail,
-          title: data.title,
-          channel: data.channel
-        };
-        resolve({ success: true, details: videoDetails });
-      } catch (e) {
-        console.error("Failed to parse yt-dlp output:", e);
-        resolve({ success: false, error: "Could not parse video data." });
-      }
+function registerYouTubeHandlers(ipcMain2) {
+  ipcMain2.handle("get-video-info", async (_, url) => {
+    const ytdlpPath = getBinaryPath("yt-dlp");
+    const args = [url, "--dump-json", "-4"];
+    return new Promise((resolve) => {
+      execFile(ytdlpPath, args, (error, stdout, stderr) => {
+        if (error || stderr) {
+          console.error(`yt-dlp error: ${stderr || error.message}`);
+          resolve({ success: false, error: "Failed to fetch video info." });
+          return;
+        }
+        try {
+          const data = JSON.parse(stdout);
+          const videoDetails = {
+            thumbnail: data.thumbnail,
+            title: data.title,
+            channel: data.channel
+          };
+          resolve({ success: true, details: videoDetails });
+        } catch (e) {
+          console.error("Failed to parse yt-dlp output:", e);
+          resolve({ success: false, error: "Could not parse video data." });
+        }
+      });
     });
   });
-});
+}
+registerYouTubeHandlers(ipcMain);
 createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path.join(__dirname, "..");
