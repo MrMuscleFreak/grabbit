@@ -10,7 +10,9 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
     return new Promise((resolve) => {
       execFile(ytdlpPath, args, (error, stdout, stderr) => {
         if (error || stderr) {
-          console.error(`yt-dlp error: ${stderr || error.message}`);
+          console.error(
+            `yt-dlp error: ${stderr || (error ? error.message : '')}`
+          );
           resolve({ success: false, error: 'Failed to fetch video info.' });
           return;
         }

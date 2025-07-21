@@ -3,8 +3,11 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { registerYouTubeHandlers } from './services/youtubeService';
+import { registerSettingsHandlers } from './services/settingsService';
 
+// services registration
 registerYouTubeHandlers(ipcMain);
+registerSettingsHandlers(ipcMain); 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const require = createRequire(import.meta.url);
@@ -34,8 +37,8 @@ let win: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
-    width: 1080, // Example: Using 4:3 aspect ratio
+    icon: path.join(process.env.VITE_PUBLIC || '', 'electron-vite.svg'),
+    width: 1080,
     height: 720,
     resizable: false,
     titleBarStyle: 'hidden',
