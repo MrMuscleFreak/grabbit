@@ -25,6 +25,16 @@ const YouTubeView = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url.trim()) return;
+
+    //  validate the YouTube URL
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+    if (!youtubeRegex.test(url)) {
+      alert(
+        'This link doesn’t appear to be from YouTube. If you\'re unsure about its source, please paste it under the "Others" category.'
+      );
+      return; // URL is not valid (yt)
+    }
+
     setIsLoading(true);
     setVideoDetails(null);
     const result = await window.ipcRenderer.invoke('get-video-info', url);
