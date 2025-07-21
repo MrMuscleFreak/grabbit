@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { FaFolderOpen } from 'react-icons/fa6';
 
 const DownloadPathSetting = () => {
   const [downloadPath, setDownloadPath] = useState('');
@@ -30,19 +31,22 @@ const DownloadPathSetting = () => {
       >
         Default Download Path
       </label>
-      <div className="flex items-center gap-2">
+      {/* Use a relative container to position the button inside the input */}
+      <div className="relative">
         <input
           type="text"
           id="downloadPath"
           value={downloadPath}
           readOnly
-          className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md cursor-default"
+          // Add right padding for the button and change text color
+          className="w-full py-2 pl-3 pr-10 bg-slate-800 border border-slate-600 rounded-md cursor-default text-slate-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
         />
         <button
           onClick={handleSelectDirectory}
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-md font-semibold whitespace-nowrap"
+          // Position the button absolutely within the relative container
+          className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 hover:text-white transition-colors"
         >
-          Browse...
+          <FaFolderOpen />
         </button>
       </div>
     </div>
