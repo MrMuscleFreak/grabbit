@@ -2,7 +2,6 @@ import Sidebar from './components/Sidebar';
 import { useState } from 'react';
 import YouTubeView from './views/YouTubeView';
 import InstagramView from './views/InstagramView';
-import SoundCloudView from './views/SoundCloudView';
 import TikTokView from './views/TikTokView';
 import SpotifyView from './views/SpotifyView';
 import OtherView from './views/OtherView';
@@ -25,8 +24,6 @@ function App() {
         return <InstagramView />;
       case 'TikTok':
         return <TikTokView />;
-      case 'SoundCloud':
-        return <SoundCloudView />;
       case 'Spotify':
         return <SpotifyView />;
       case 'Other':

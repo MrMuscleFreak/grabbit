@@ -4,7 +4,6 @@ import {
   FaInstagram,
   FaTiktok,
   FaSpotify,
-  FaSoundcloud,
   FaImage,
   FaDownload,
 } from 'react-icons/fa';
@@ -38,7 +37,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     { name: 'Instagram', icon: FaInstagram },
     { name: 'TikTok', icon: FaTiktok },
     { name: 'Spotify', icon: FaSpotify },
-    { name: 'SoundCloud', icon: FaSoundcloud },
     { name: 'Other', icon: PiDotsThreeCircle },
     { name: 'Convert Media', icon: FaArrowRightArrowLeft, isSeparator: true },
     { name: 'Images', icon: FaImage },
