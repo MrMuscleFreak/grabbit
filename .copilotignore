@@ -3,3 +3,4 @@
 *.exe
 bin/mac/ffmpeg
 bin/mac/yt-dl_macos
+dist-electron

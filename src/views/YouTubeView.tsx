@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaArrowRight, FaDownload } from 'react-icons/fa6';
 import { FaYoutube } from 'react-icons/fa';
+import URLForm from '../components/youtube/URLForm';
+import VideoDetailsCard from '../components/youtube/VideoDetailsCard';
 
 type VideoDetails = {
   title: string;
@@ -19,20 +20,14 @@ const YouTubeView = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url.trim()) return;
-
     setIsLoading(true);
-    setVideoDetails(null); // Clear previous details before fetching new ones
-
-    // Call the main process to get video info using the URL
+    setVideoDetails(null);
     const result = await window.ipcRenderer.invoke('get-video-info', url);
-
     if (result.success) {
       setVideoDetails(result.details);
     } else {
       alert(`Error: ${result.error}`);
-      console.error(result.error);
     }
-
     setIsLoading(false);
   };
 
@@ -61,142 +56,29 @@ const YouTubeView = () => {
               transition={{ duration: 0.3 }}
               className="text-slate-400 text-center mb-6 max-w-md"
             >
-              Download videos, shorts, and playlists from YouTube by pasting the
-              link below and selecting your desired format.
+              Download videos, shorts, and playlists from YouTube.
             </motion.p>
           )}
         </AnimatePresence>
 
-        <form onSubmit={handleSubmit} className="w-full relative">
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://www.youtube.com/watch?v=..."
-            className="w-full p-3 pr-12 text-lg bg-slate-700/50 text-white placeholder-slate-500 rounded-2xl border-2 border-slate-600 focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all"
-            disabled={isLoading}
-          />
-          <button
-            type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-slate-500 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <FaArrowRight />
-            )}
-          </button>
-        </form>
+        <URLForm
+          url={url}
+          setUrl={setUrl}
+          handleSubmit={handleSubmit}
+          isLoading={isLoading}
+        />
       </motion.div>
 
       <AnimatePresence>
         {videoDetails && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.98 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="mt-8 w-full max-w-2xl bg-slate-800/70 border border-slate-700 rounded-2xl shadow-2xl p-5"
-          >
-            <div className="flex gap-8">
-              {/* Left Column Thumbnail and Info */}
-              <div className="w-3/5 flex-shrink-0">
-                <img
-                  src={videoDetails.thumbnail}
-                  alt="Video Thumbnail"
-                  className="w-full h-auto rounded-xl object-cover shadow-lg"
-                />
-                <h2 className="text-xl font-bold text-white mt-4 leading-tight">
-                  {videoDetails.title}
-                </h2>
-                <p className="text-slate-400 text-sm mt-1">
-                  {videoDetails.channel}
-                </p>
-              </div>
-
-              {/* Right Column: Download Options */}
-              <div className="w-2/5 flex flex-col">
-                <div className="flex border-b border-slate-600 mb-4">
-                  <button
-                    onClick={() => {
-                      setActiveTab('video');
-                      setSelectedQuality('best'); // Set default for video
-                    }}
-                    className={`flex-1 py-2 text-center font-semibold transition-colors ${
-                      activeTab === 'video'
-                        ? 'text-purple-400 border-b-2 border-purple-400'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    Video
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab('audio');
-                      setSelectedQuality('best_audio'); // Set default for audio
-                    }}
-                    className={`flex-1 py-2 text-center font-semibold transition-colors ${
-                      activeTab === 'audio'
-                        ? 'text-purple-400 border-b-2 border-purple-400'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    Audio
-                  </button>
-                </div>
-
-                {/* Quality Options */}
-                <div className="flex-grow space-y-3">
-                  {activeTab === 'video' && (
-                    <>
-                      <button
-                        onClick={() => setSelectedQuality('best')}
-                        className={`w-full text-left p-3 rounded-lg transition-colors ${
-                          selectedQuality === 'best'
-                            ? 'bg-purple-600/30 text-purple-300 font-bold'
-                            : 'bg-slate-700/50 hover:bg-slate-700 text-slate-400'
-                        }`}
-                      >
-                        Best Quality
-                      </button>
-                      <button
-                        onClick={() => setSelectedQuality('1080p')}
-                        className={`w-full text-left p-3 rounded-lg transition-colors ${
-                          selectedQuality === '1080p'
-                            ? 'bg-purple-600/30 text-purple-300 font-bold'
-                            : 'bg-slate-700/50 hover:bg-slate-700 text-slate-400'
-                        }`}
-                      >
-                        1080p
-                      </button>
-                    </>
-                  )}
-                  {activeTab === 'audio' && (
-                    <button
-                      onClick={() => setSelectedQuality('best_audio')}
-                      className={`w-full text-left p-3 rounded-lg transition-colors ${
-                        selectedQuality === 'best_audio'
-                          ? 'bg-purple-600/30 text-purple-300 font-bold'
-                          : 'bg-slate-700/50 hover:bg-slate-700 text-slate-400'
-                      }`}
-                    >
-                      Best Quality
-                    </button>
-                  )}
-                </div>
-
-                {/* Download Button */}
-                <button
-                  onClick={handleDownload}
-                  className="w-full mt-6 bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-lg"
-                >
-                  <FaDownload />
-                  Download
-                </button>
-              </div>
-            </div>
-          </motion.div>
+          <VideoDetailsCard
+            details={videoDetails}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            selectedQuality={selectedQuality}
+            setSelectedQuality={setSelectedQuality}
+            onDownload={handleDownload}
+          />
         )}
       </AnimatePresence>
     </div>
