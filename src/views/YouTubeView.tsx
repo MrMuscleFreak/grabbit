@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaYoutube } from 'react-icons/fa';
+import { IpcRendererEvent } from 'electron';
 import URLForm from '../components/youtube/URLForm';
 import VideoDetailsCard from '../components/youtube/VideoDetailsCard';
 
@@ -14,6 +15,10 @@ const YouTubeView = () => {
   const [url, setUrl] = useState('');
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState<
+    'idle' | 'downloading' | 'completed' | 'failed'
+  >('idle');
+  const [downloadProgress, setDownloadProgress] = useState(0);
   const [activeTab, setActiveTab] = useState<'video' | 'audio'>('video');
   const [selectedQuality, setSelectedQuality] = useState('best');
 
@@ -31,10 +36,55 @@ const YouTubeView = () => {
     setIsLoading(false);
   };
 
-  const handleDownload = () => {
-    console.log(`Downloading ${activeTab} (${selectedQuality}) from ${url}`);
-    alert('Download started! (See console for details)');
+  const handleDownload = async () => {
+    if (!videoDetails) return;
+
+    setDownloadStatus('downloading');
+    setDownloadProgress(0);
+
+    window.ipcRenderer.send('download-youtube-media', {
+      url: url,
+      quality: selectedQuality,
+      format: activeTab === 'video' ? 'mp4' : 'mp3',
+    });
   };
+
+  useEffect(() => {
+    // Listener for progress updates
+    const handleProgress = (
+      _event: IpcRendererEvent,
+      { progress }: { progress: number }
+    ) => {
+      setDownloadProgress((prevProgress) =>
+        progress > prevProgress ? progress : prevProgress
+      );
+    };
+
+    // Listener for completion
+    const handleComplete = (
+      _event: IpcRendererEvent,
+      { success, error }: { success: boolean; error?: string }
+    ) => {
+      if (success) {
+        setDownloadStatus('completed');
+        new Notification('Download Complete', {
+          body: `Successfully downloaded "${videoDetails?.title}".`,
+        });
+      } else {
+        setDownloadStatus('failed');
+        alert(`Download failed: ${error}`);
+      }
+    };
+
+    window.ipcRenderer.on('download-progress', handleProgress);
+    window.ipcRenderer.on('download-complete', handleComplete);
+
+    // Cleanup listeners when the component unmounts
+    return () => {
+      window.ipcRenderer.off('download-progress', handleProgress);
+      window.ipcRenderer.off('download-complete', handleComplete);
+    };
+  }, [videoDetails]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center transition-all duration-500">
@@ -78,6 +128,8 @@ const YouTubeView = () => {
             selectedQuality={selectedQuality}
             setSelectedQuality={setSelectedQuality}
             onDownload={handleDownload}
+            downloadStatus={downloadStatus}
+            downloadProgress={downloadProgress}
           />
         )}
       </AnimatePresence>
