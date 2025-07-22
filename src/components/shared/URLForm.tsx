@@ -5,16 +5,23 @@ type URLFormProps = {
   setUrl: (url: string) => void;
   handleSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
+  placeholder?: string;
 };
 
-const URLForm = ({ url, setUrl, handleSubmit, isLoading }: URLFormProps) => {
+const URLForm = ({
+  url,
+  setUrl,
+  handleSubmit,
+  isLoading,
+  placeholder,
+}: URLFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="w-full relative">
       <input
         type="text"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        placeholder="https://www.youtube.com/watch?v=..."
+        placeholder={placeholder || 'Paste a link here...'}
         className="w-full p-3 pr-12 text-lg bg-slate-700/50 text-white placeholder-slate-500 rounded-2xl border-2 border-slate-600 focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all"
         disabled={isLoading}
       />

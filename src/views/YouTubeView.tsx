@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { FaYoutube } from 'react-icons/fa';
 import { IpcRendererEvent } from 'electron';
-import URLForm from '../components/youtube/URLForm';
+import DownloadViewLayout from '../components/shared/DownloadViewLayout';
 import VideoDetailsCard from '../components/youtube/VideoDetailsCard';
 import PlaylistHeader from '../components/youtube/PlaylistHeader';
 
@@ -138,77 +137,50 @@ const YouTubeView = () => {
   }, [downloadQueue, batchDownloadConfig]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center transition-all duration-500">
-      <motion.div
-        layout
-        transition={{ duration: 0.5, type: 'spring', bounce: 0.2 }}
-        className="w-full max-w-2xl flex flex-col items-center"
-      >
-        <div className="flex items-center gap-2 mb-3">
-          <FaYoutube className="text-6xl text-red-600" />
-          <span className="text-4xl font-bold text-white">Download</span>
-        </div>
-
-        <AnimatePresence>
-          {!VideoDetailsCard && (
-            <motion.p
-              initial={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-              transition={{ duration: 0.3 }}
-              className="text-slate-400 text-center mb-6 max-w-md"
-            >
-              Download videos, shorts, and playlists from YouTube.
-            </motion.p>
-          )}
-        </AnimatePresence>
-
-        <URLForm
-          url={url}
-          setUrl={setUrl}
-          handleSubmit={handleSubmit}
-          isLoading={isLoading}
+    <DownloadViewLayout
+      icon={FaYoutube}
+      iconClassName="text-red-600"
+      title="Download"
+      subtitle="Download videos, shorts, and playlists from YouTube."
+      url={url}
+      setUrl={setUrl}
+      handleSubmit={handleSubmit}
+      isLoading={isLoading}
+      showInitialContent={videos.length === 0}
+      placeholder="https://www.youtube.com/watch?v=..."
+    >
+      {/* The children prop now contains only the YouTube-specific results */}
+      {playlistTitle && (
+        <PlaylistHeader
+          playlistTitle={playlistTitle}
+          videoCount={videos.length}
+          thumbnailUrl={videos[0]?.thumbnail}
+          onDownloadAll={handleDownloadAll}
+          isDownloading={!!batchDownloadConfig || !!downloadingId}
         />
-      </motion.div>
+      )}
 
-      <div className="w-full max-w-3xl mt-4 space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] flex flex-col items-center">
-        <AnimatePresence>
-          {videos.length > 1 && (
-            <PlaylistHeader
-              playlistTitle={playlistTitle ?? 'Playlist'}
-              videoCount={videos.length}
-              thumbnailUrl={videos[0]?.thumbnail}
-              onDownloadAll={handleDownloadAll}
-              isDownloading={!!batchDownloadConfig || !!downloadingId}
-            />
-          )}
+      {playlistTitle && (
+        <div className="w-full max-w-2xl px-2 pt-2">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Videos in Playlist
+          </p>
+        </div>
+      )}
 
-          {playlistTitle && (
-            <div className="w-full max-w-2xl px-2 pt-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                Videos in Playlist
-              </p>
-            </div>
-          )}
-
-          {videos.map((video) => (
-            <VideoDetailsCard
-              key={video.id}
-              details={video}
-              isListItem={videos.length > 1}
-              onDownload={(quality, format) =>
-                handleDownload(video.url, video.id, quality, format)
-              }
-              downloadStatus={
-                downloadingId === video.id ? 'downloading' : 'idle'
-              }
-              downloadProgress={
-                downloadingId === video.id ? downloadProgress : 0
-              }
-            />
-          ))}
-        </AnimatePresence>
-      </div>
-    </div>
+      {videos.map((video) => (
+        <VideoDetailsCard
+          key={video.id}
+          details={video}
+          isListItem={playlistTitle !== null}
+          onDownload={(quality, format) =>
+            handleDownload(video.url, video.id, quality, format)
+          }
+          downloadStatus={downloadingId === video.id ? 'downloading' : 'idle'}
+          downloadProgress={downloadingId === video.id ? downloadProgress : 0}
+        />
+      ))}
+    </DownloadViewLayout>
   );
 };
 
