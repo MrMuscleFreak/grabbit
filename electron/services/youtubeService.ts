@@ -5,10 +5,17 @@ import store from '../utils/store';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 
+type PlaylistEntry = {
+  id: string;
+  title: string;
+  channel: string;
+  url: string;
+};
+
 export function registerYouTubeHandlers(ipcMain: IpcMain) {
   ipcMain.handle('get-video-info', async (_, url: string) => {
     const ytdlpPath = getBinaryPath('yt-dlp');
-    const args = [url, '--dump-json', '-4'];
+    const args = [url, '--flat-playlist', '--dump-single-json', '-4'];
 
     return new Promise((resolve) => {
       execFile(ytdlpPath, args, (error, stdout, stderr) => {
@@ -21,12 +28,34 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
         }
         try {
           const data = JSON.parse(stdout);
-          const videoDetails = {
-            thumbnail: data.thumbnail,
-            title: data.title,
-            channel: data.channel,
-          };
-          resolve({ success: true, details: videoDetails });
+          let videos = [];
+          let playlistTitle = null;
+
+          if (data._type === 'playlist') {
+            // playlist
+            playlistTitle = data.title;
+            videos = data.entries.map((entry: PlaylistEntry) => ({
+              id: entry.id,
+              title: entry.title,
+              channel: entry.channel,
+              thumbnail: `https://i.ytimg.com/vi/${entry.id}/hqdefault.jpg`,
+              url: entry.url,
+            }));
+          } else {
+            // video
+            videos.push({
+              id: data.id,
+              title: data.title,
+              channel: data.channel,
+              thumbnail: data.thumbnail,
+              url: data.webpage_url,
+            });
+          }
+          resolve({
+            success: true,
+            videos: videos,
+            playlistTitle: playlistTitle,
+          });
         } catch (e) {
           console.error('Failed to parse yt-dlp output:', e);
           resolve({ success: false, error: 'Could not parse video data.' });

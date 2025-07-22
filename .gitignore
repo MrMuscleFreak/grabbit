@@ -25,4 +25,5 @@ release
 *.sw?
 dist-electron/main.js
 dist-electron/preload.mjs
+local-test
 

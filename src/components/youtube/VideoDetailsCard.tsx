@@ -1,33 +1,34 @@
 import { FaDownload, FaMusic, FaVideo } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 type VideoDetails = {
+  id: string;
   title: string;
   channel: string;
   thumbnail: string;
+  url: string;
 };
 
 type VideoDetailsCardProps = {
   details: VideoDetails;
-  activeTab: 'video' | 'audio';
-  setActiveTab: (tab: 'video' | 'audio') => void;
-  selectedQuality: string;
-  setSelectedQuality: (quality: string) => void;
-  onDownload: () => void;
+  onDownload: (quality: string, format: 'mp4' | 'mp3') => void;
   downloadStatus: 'idle' | 'downloading' | 'completed' | 'failed';
   downloadProgress: number;
+  isListItem?: boolean;
 };
 
 const VideoDetailsCard = ({
   details,
-  activeTab,
-  setActiveTab,
-  selectedQuality,
-  setSelectedQuality,
   onDownload,
+  isListItem = false,
   downloadStatus,
   downloadProgress,
 }: VideoDetailsCardProps) => {
+  const [activeTab, setActiveTab] = useState<'video' | 'audio'>('video');
+  const [selectedQuality, setSelectedQuality] = useState(
+    'bestvideo+bestaudio/best'
+  );
   const videoQualities = [
     { label: 'Best Quality', value: 'bestvideo+bestaudio/best' },
     { label: '1080p', value: 'bestvideo[height<=1080]+bestaudio/best' },
@@ -41,6 +42,68 @@ const VideoDetailsCard = ({
 
   const currentQualities =
     activeTab === 'video' ? videoQualities : audioQualities;
+
+  const handleDownloadClick = () => {
+    const format: 'mp4' | 'mp3' = activeTab === 'video' ? 'mp4' : 'mp3';
+    onDownload(selectedQuality, format);
+  };
+
+  if (isListItem) {
+    return (
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
+        className="w-full max-w-2xl flex items-center gap-4 p-3 bg-slate-800/70 border border-slate-700 rounded-xl"
+      >
+        <div className="relative flex-shrink-0">
+          <img
+            src={details.thumbnail}
+            alt={details.title}
+            className="w-32 h-20 object-cover rounded-lg"
+          />
+          {downloadStatus === 'downloading' && (
+            <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-lg">
+              <div className="w-8 h-8 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+          {downloadStatus === 'completed' && (
+            <div className="absolute inset-0 bg-green-600/80 flex items-center justify-center rounded-lg">
+              <FaDownload className="text-white text-2xl" />
+            </div>
+          )}
+        </div>
+        <div className="flex-grow overflow-hidden">
+          <h3
+            className="text-white font-semibold truncate"
+            title={details.title}
+          >
+            {details.title}
+          </h3>
+          <p className="text-slate-400 text-sm truncate">{details.channel}</p>
+        </div>
+        <div className="flex-shrink-0 flex items-center gap-4 pr-5">
+          <button
+            onClick={() => onDownload('bestvideo+bestaudio/best', 'mp4')}
+            disabled={downloadStatus !== 'idle'}
+            className="text-purple-400 hover:text-purple-300 disabled:text-slate-600 transition-colors"
+            title="Download as MP4"
+          >
+            <FaVideo className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => onDownload('bestaudio/best', 'mp3')}
+            disabled={downloadStatus !== 'idle'}
+            className="text-purple-400 hover:text-purple-300 disabled:text-slate-600 transition-colors"
+            title="Download as MP3"
+          >
+            <FaMusic className="w-5 h-5" />
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -70,7 +133,7 @@ const VideoDetailsCard = ({
             <button
               onClick={() => {
                 setActiveTab('video');
-                setSelectedQuality(videoQualities[0].value); // Set default for video
+                setSelectedQuality(videoQualities[0].value);
               }}
               className={`flex-1 py-2 font-semibold transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'video'
@@ -176,7 +239,7 @@ const VideoDetailsCard = ({
         )}
         {(downloadStatus === 'idle' || downloadStatus === 'failed') && (
           <button
-            onClick={onDownload}
+            onClick={handleDownloadClick}
             className="w-full h-12 bg-purple-600 text-white font-bold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-lg"
           >
             <FaDownload />

@@ -4,23 +4,28 @@ import { FaYoutube } from 'react-icons/fa';
 import { IpcRendererEvent } from 'electron';
 import URLForm from '../components/youtube/URLForm';
 import VideoDetailsCard from '../components/youtube/VideoDetailsCard';
+import PlaylistHeader from '../components/youtube/PlaylistHeader';
 
 type VideoDetails = {
+  id: string;
   title: string;
   channel: string;
   thumbnail: string;
+  url: string;
 };
 
 const YouTubeView = () => {
   const [url, setUrl] = useState('');
-  const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
+  const [videos, setVideos] = useState<VideoDetails[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [downloadStatus, setDownloadStatus] = useState<
-    'idle' | 'downloading' | 'completed' | 'failed'
-  >('idle');
+  const [playlistTitle, setPlaylistTitle] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
-  const [activeTab, setActiveTab] = useState<'video' | 'audio'>('video');
-  const [selectedQuality, setSelectedQuality] = useState('best');
+  const [downloadQueue, setDownloadQueue] = useState<VideoDetails[]>([]);
+  const [batchDownloadConfig, setBatchDownloadConfig] = useState<{
+    quality: string;
+    format: 'mp4' | 'mp3';
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,28 +41,60 @@ const YouTubeView = () => {
     }
 
     setIsLoading(true);
-    setVideoDetails(null);
+    setVideos([]); // Clear previous videos
+    setPlaylistTitle(null);
     const result = await window.ipcRenderer.invoke('get-video-info', url);
     if (result.success) {
-      setVideoDetails(result.details);
+      setVideos(result.videos);
+      setPlaylistTitle(result.playlistTitle);
     } else {
       alert(`Error: ${result.error}`);
     }
     setIsLoading(false);
   };
 
-  const handleDownload = async () => {
-    if (!videoDetails) return;
-
-    setDownloadStatus('downloading');
+  const handleDownload = async (
+    videoUrl: string,
+    videoId: string,
+    quality: string,
+    format: 'mp4' | 'mp3'
+  ) => {
+    if (downloadingId || downloadQueue.length > 0) {
+      alert('A download is already in progress.');
+      return;
+    }
+    setDownloadingId(videoId);
     setDownloadProgress(0);
 
     window.ipcRenderer.send('download-youtube-media', {
-      url: url,
-      quality: selectedQuality,
-      format: activeTab === 'video' ? 'mp4' : 'mp3',
+      url: videoUrl,
+      quality: quality,
+      format: format,
     });
   };
+
+  const handleDownloadAll = (quality: string, format: 'mp4' | 'mp3') => {
+    if (downloadingId || downloadQueue.length > 0) {
+      alert('A download is already in progress.');
+      return;
+    }
+    setDownloadQueue([...videos]);
+    setBatchDownloadConfig({ quality, format });
+  };
+
+  useEffect(() => {
+    // This effect triggers the next download in the queue
+    if (downloadQueue.length > 0 && !downloadingId && batchDownloadConfig) {
+      const nextVideo = downloadQueue[0];
+      setDownloadingId(nextVideo.id);
+      setDownloadProgress(0);
+      window.ipcRenderer.send('download-youtube-media', {
+        url: nextVideo.url,
+        quality: batchDownloadConfig.quality,
+        format: batchDownloadConfig.format,
+      });
+    }
+  }, [downloadQueue, downloadingId, batchDownloadConfig]);
 
   useEffect(() => {
     // Listener for progress updates
@@ -75,26 +112,30 @@ const YouTubeView = () => {
       _event: IpcRendererEvent,
       { success, error }: { success: boolean; error?: string }
     ) => {
-      if (success) {
-        setDownloadStatus('completed');
-        new Notification('Download Complete', {
-          body: `Successfully downloaded "${videoDetails?.title}".`,
-        });
-      } else {
-        setDownloadStatus('failed');
+      if (!success) {
         alert(`Download failed: ${error}`);
       }
+
+      // If we are in a batch download, process the queue
+      if (batchDownloadConfig) {
+        const newQueue = downloadQueue.slice(1);
+        setDownloadQueue(newQueue);
+        if (newQueue.length === 0) {
+          setBatchDownloadConfig(null); // Batch is done
+        }
+      }
+
+      setDownloadingId(null); // Free up for the next download
     };
 
     window.ipcRenderer.on('download-progress', handleProgress);
     window.ipcRenderer.on('download-complete', handleComplete);
 
-    // Cleanup listeners when the component unmounts
     return () => {
       window.ipcRenderer.off('download-progress', handleProgress);
       window.ipcRenderer.off('download-complete', handleComplete);
     };
-  }, [videoDetails]);
+  }, [downloadQueue, batchDownloadConfig]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center transition-all duration-500">
@@ -109,7 +150,7 @@ const YouTubeView = () => {
         </div>
 
         <AnimatePresence>
-          {!videoDetails && (
+          {!VideoDetailsCard && (
             <motion.p
               initial={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -129,20 +170,44 @@ const YouTubeView = () => {
         />
       </motion.div>
 
-      <AnimatePresence>
-        {videoDetails && (
-          <VideoDetailsCard
-            details={videoDetails}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            selectedQuality={selectedQuality}
-            setSelectedQuality={setSelectedQuality}
-            onDownload={handleDownload}
-            downloadStatus={downloadStatus}
-            downloadProgress={downloadProgress}
-          />
-        )}
-      </AnimatePresence>
+      <div className="w-full max-w-3xl mt-4 space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] flex flex-col items-center">
+        <AnimatePresence>
+          {videos.length > 1 && (
+            <PlaylistHeader
+              playlistTitle={playlistTitle ?? 'Playlist'}
+              videoCount={videos.length}
+              thumbnailUrl={videos[0]?.thumbnail}
+              onDownloadAll={handleDownloadAll}
+              isDownloading={!!batchDownloadConfig || !!downloadingId}
+            />
+          )}
+
+          {playlistTitle && (
+            <div className="w-full max-w-2xl px-2 pt-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Videos in Playlist
+              </p>
+            </div>
+          )}
+
+          {videos.map((video) => (
+            <VideoDetailsCard
+              key={video.id}
+              details={video}
+              isListItem={videos.length > 1}
+              onDownload={(quality, format) =>
+                handleDownload(video.url, video.id, quality, format)
+              }
+              downloadStatus={
+                downloadingId === video.id ? 'downloading' : 'idle'
+              }
+              downloadProgress={
+                downloadingId === video.id ? downloadProgress : 0
+              }
+            />
+          ))}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
