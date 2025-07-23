@@ -47,8 +47,7 @@ function App() {
         activeLink={activeLink}
         setActiveLink={setActiveLink}
       />
-      {/* <div className="flex-1 p-4">{renderContent()}</div> */}
-      <div className="flex-1 h-[calc(100vh-32px)] flex flex-col">
+      <div className="flex-1 h-[calc(100vh-32px)] flex flex-col items-center">
         {renderContent()}
       </div>
     </div>

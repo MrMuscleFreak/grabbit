@@ -21,4 +21,16 @@ export function registerSettingsHandlers(ipcMain: IpcMain) {
     store.set('downloadPath', selectedPath);
     return { success: true, path: selectedPath };
   });
+  ipcMain.handle(
+    'set-setting',
+    async (_, { key, value }: { key: string; value: unknown }) => {
+      try {
+        store.set(key, value);
+        return { success: true };
+      } catch (error) {
+        console.error(`Failed to set setting '${key}':`, error);
+        return { success: false };
+      }
+    }
+  );
 }
