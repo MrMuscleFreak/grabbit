@@ -8,7 +8,7 @@ import ToggleSetting from '../components/settings/ToggleSetting';
 
 const SettingsView = () => {
   return (
-    <div className=" w-2xl p-4 text-white h-full overflow-y-auto">
+    <div className=" w-2xl p-4 py-10 text-white h-full overflow-y-auto">
       <div className="mx-auto space-y-10">
         <SettingsSection title="File Management">
           <DownloadPathSetting />
@@ -62,7 +62,10 @@ const SettingsView = () => {
             ]}
           />
         </SettingsSection>
-        <SettingsSection title="Advanced">
+        <SettingsSection
+          title="Advanced"
+          warning="If you don't understand what you're doing here, you are better off not touching these settings."
+        >
           <ToggleSetting
             settingKey="debugMode"
             label="Debug Mode"
