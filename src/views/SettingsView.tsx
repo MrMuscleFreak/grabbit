@@ -68,6 +68,11 @@ const SettingsView = () => {
             label="Debug Mode"
             description="Enables verbose logging and additional debug features saved in the log files."
           />
+          <ToggleSetting
+            settingKey="enableVerboseLogging"
+            label="Enable Verbose yt-dlp Logging"
+            description="Enables verbose logging for yt-dlp."
+          />
           <TextAreaSetting
             settingKey="customYtdlpArgs"
             label="Custom yt-dlp Args"
@@ -88,7 +93,7 @@ const SettingsView = () => {
                   - auto check for updates
                   ADVANCED
                   - Debug mode ✅
-                  - Enable Verbose yt-dlp Logging
+                  - Enable Verbose yt-dlp Logging ✅
                   - Custom yt-dlp Args ✅
                   -
         */}

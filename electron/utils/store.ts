@@ -13,6 +13,7 @@ type StoreSchema = {
   fileNameTemplate: string;
   customYtdlpArgs: string;
   debugMode: boolean;
+  enableVerboseLogging: boolean;
 };
 
 const store = new Store<StoreSchema>({
@@ -27,6 +28,7 @@ const store = new Store<StoreSchema>({
     fileNameTemplate: '%(title)s.%(ext)s',
     customYtdlpArgs: '',
     debugMode: false,
+    enableVerboseLogging: false,
   },
 });
 

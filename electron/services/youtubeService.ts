@@ -87,10 +87,19 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       const defaultAudioFormat = store.get('defaultAudioFormat');
       const frameratePreference = store.get('frameratePreference');
       const customYtdlpArgs = store.get('customYtdlpArgs');
+      const enableVerboseLogging = store.get('enableVerboseLogging');
+
+      log.log(
+        `Starting download: ${url}, Quality: ${quality}, Format: ${format}`
+      );
 
       let args: string[] = [];
       //'--progress' flag to get progress updates from yt-dlp
       const commonArgs = [url, '--progress', '-o', outputPath, '-4'];
+
+      if (enableVerboseLogging) {
+        commonArgs.push('--verbose');
+      }
 
       if (overwriteFiles) {
         commonArgs.push('--force-overwrites');
@@ -146,6 +155,10 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
 
       child.stdout.on('data', (data: Buffer) => {
         const output = data.toString();
+
+        if (enableVerboseLogging) {
+          log.info(`[yt-dlp]: ${output}`);
+        }
 
         // Regex to find the percentage from yt-dlp's output
         const progressMatch = output.match(/\[download\]\s+([\d.]+)%/);
