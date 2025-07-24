@@ -2,6 +2,7 @@ import DownloadPathSetting from '../components/settings/DownloadPathSetting';
 import DropdownSetting from '../components/settings/DropdownSetting';
 import FileNameSetting from '../components/settings/FileNameSetting';
 import SettingsSection from '../components/settings/SettingsSection';
+import TextAreaSetting from '../components/settings/TextAreaSettings';
 import ToggleSetting from '../components/settings/ToggleSetting';
 
 const SettingsView = () => {
@@ -60,6 +61,13 @@ const SettingsView = () => {
             ]}
           />
         </SettingsSection>
+        <SettingsSection title="Advanced">
+          <TextAreaSetting
+            settingKey="customYtdlpArgs"
+            label="Custom yt-dlp Args"
+            description="Additional arguments to pass to yt-dlp. Separate multiple arguments with spaces."
+          />
+        </SettingsSection>
 
         {/* TODO: New settings options
                   - File naming convention  ✅
@@ -74,7 +82,7 @@ const SettingsView = () => {
                   ADVANCED
                   - Debug mode
                   - Enable Verbose yt-dlp Logging
-                  - Custom yt-dlp Args
+                  - Custom yt-dlp Args ✅
                   -
         */}
       </div>

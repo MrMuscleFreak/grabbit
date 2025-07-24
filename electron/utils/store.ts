@@ -11,6 +11,7 @@ type StoreSchema = {
   defaultAudioFormat: string;
   frameratePreference: string;
   fileNameTemplate: string;
+  customYtdlpArgs: string;
 };
 
 const store = new Store<StoreSchema>({
@@ -23,6 +24,7 @@ const store = new Store<StoreSchema>({
     defaultAudioFormat: 'mp3',
     frameratePreference: 'auto',
     fileNameTemplate: '%(title)s.%(ext)s',
+    customYtdlpArgs: '',
   },
 });
 

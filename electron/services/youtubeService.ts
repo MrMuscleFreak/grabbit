@@ -87,6 +87,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       const defaultVideoFormat = store.get('defaultVideoFormat');
       const defaultAudioFormat = store.get('defaultAudioFormat');
       const frameratePreference = store.get('frameratePreference');
+      const customYtdlpArgs = store.get('customYtdlpArgs');
 
       let args: string[] = [];
       //'--progress' flag to get progress updates from yt-dlp
@@ -134,6 +135,11 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
           '--ffmpeg-location',
           ffmpegPath,
         ];
+      }
+      if (customYtdlpArgs && customYtdlpArgs.trim() !== '') {
+        // Split the string by spaces to get an array of arguments
+        const customArgsArray = customYtdlpArgs.trim().split(/\s+/);
+        args.push(...customArgsArray);
       }
 
       console.log('Running yt-dlp command:', ytdlpPath, args);
