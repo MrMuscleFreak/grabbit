@@ -13,6 +13,11 @@ const SettingsView = () => {
             label="Overwrite Existing Files"
             description="If disabled, new files will be renamed (e.g., 'video (1).mp4')."
           />
+          <ToggleSetting
+            settingKey="smartRename"
+            label="Smart Rename Downloads"
+            description="If enabled, files will be renamed intelligently (e.g., 'video (1).mp4')."
+          />
         </SettingsSection>
 
         <SettingsSection title="Media & Formats">
@@ -20,6 +25,11 @@ const SettingsView = () => {
             settingKey="embedThumbnails"
             label="Embed Thumbnail in Audio"
             description="Saves the video thumbnail as the cover art for audio files."
+          />
+          <ToggleSetting
+            settingKey="embedMetadata"
+            label="Embed Metadata"
+            description="Includes media metadata in the downloaded media file."
           />
         </SettingsSection>
 
@@ -29,9 +39,9 @@ const SettingsView = () => {
                   - Default media format
                   - Default audio format
                   - auto embed thumbnails ✅
-                  - auto embed metadata
+                  - auto embed metadata ✅
                   - frame rate preference
-                  - smart rename downloads
+                  - smart rename downloads 
                   - auto check for updates
                   ADVANCED
                   - Debug mode

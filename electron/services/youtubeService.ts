@@ -82,6 +82,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       // Switch settings
       const embedThumbnails = store.get('embedThumbnails');
       const overwriteFiles = store.get('overwriteFiles');
+      const embedMetadata = store.get('embedMetadata');
 
       let args: string[] = [];
       //'--progress' flag to get progress updates from yt-dlp
@@ -89,6 +90,10 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
 
       if (overwriteFiles) {
         commonArgs.push('--force-overwrites');
+      }
+
+      if (embedMetadata) {
+        commonArgs.push('--add-metadata');
       }
 
       if (format === 'mp3') {

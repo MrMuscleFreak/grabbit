@@ -6,6 +6,7 @@ type StoreSchema = {
   downloadPath: string;
   overwriteFiles: boolean;
   embedThumbnails: boolean;
+  embedMetadata: boolean;
 };
 
 const store = new Store<StoreSchema>({
@@ -13,6 +14,7 @@ const store = new Store<StoreSchema>({
     downloadPath: app.getPath('downloads'),
     overwriteFiles: false,
     embedThumbnails: true,
+    embedMetadata: true,
   },
 });
 
