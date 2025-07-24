@@ -5,6 +5,7 @@ import SettingsSection from '../components/settings/SettingsSection';
 import ShowLogFiles from '../components/settings/ShowLogFiles';
 import TextAreaSetting from '../components/settings/TextAreaSettings';
 import ToggleSetting from '../components/settings/ToggleSetting';
+import VersionInfo from '../components/settings/VersionInfo';
 
 const SettingsView = () => {
   return (
@@ -84,21 +85,12 @@ const SettingsView = () => {
           <ShowLogFiles />
         </SettingsSection>
 
+        <VersionInfo appName="Grabbit" />
+
         {/* TODO: New settings options
-                  - File naming convention  ✅
-                  - Overwrite files ✅
-                  - Default media format ✅
-                  - Default audio format ✅
-                  - auto embed thumbnails ✅
-                  - auto embed metadata ✅
-                  - frame rate preference ✅
+                  - Multiple downloads at once selector
                   - smart rename downloads ???
                   - auto check for updates
-                  ADVANCED
-                  - Debug mode ✅
-                  - Enable Verbose yt-dlp Logging ✅
-                  - Custom yt-dlp Args ✅
-                  -
         */}
       </div>
     </div>

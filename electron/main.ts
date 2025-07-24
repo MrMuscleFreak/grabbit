@@ -6,6 +6,8 @@ import log from 'electron-log/main';
 import { registerYouTubeHandlers } from './services/youtubeService';
 import { registerSettingsHandlers } from './services/settingsService';
 import store from './utils/store';
+import { execFile } from 'node:child_process';
+import { getBinaryPath } from './utils/binaries';
 
 // services registration
 log.initialize();
@@ -97,6 +99,46 @@ app.on('activate', () => {
 
 ipcMain.on('open-log-file', () => {
   shell.openPath(log.transports.file.getFile().path);
+});
+
+// Replace the old 'get-app-version' handler with this one
+ipcMain.handle('get-versions', async () => {
+  const ytdlpPath = getBinaryPath('yt-dlp');
+  const ffmpegPath = getBinaryPath('ffmpeg');
+
+  const getVersion = (path: string, args: string[]): Promise<string> => {
+    return new Promise((resolve) => {
+      execFile(path, args, (error, stdout) => {
+        if (error) {
+          resolve('N/A');
+          return;
+        }
+        // ffmpeg version is on the first line
+        resolve(stdout.split('\n')[0]);
+      });
+    });
+  };
+
+  try {
+    const [ytdlpVersion, ffmpegVersionOutput] = await Promise.all([
+      getVersion(ytdlpPath, ['--version']),
+      getVersion(ffmpegPath, ['-version']),
+    ]);
+
+    // Extract just the version number from ffmpeg's output
+    const ffmpegVersionMatch = ffmpegVersionOutput.match(
+      /ffmpeg version ([\d.]+)/
+    );
+    const ffmpegVersion = ffmpegVersionMatch ? ffmpegVersionMatch[1] : 'N/A';
+
+    return {
+      app: app.getVersion(), // Use app.getVersion() here
+      ytdlp: ytdlpVersion.trim(),
+      ffmpeg: ffmpegVersion,
+    };
+  } catch (e) {
+    return { app: app.getVersion(), ytdlp: 'N/A', ffmpeg: 'N/A' };
+  }
 });
 
 app.whenReady().then(createWindow);
