@@ -84,6 +84,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       const overwriteFiles = store.get('overwriteFiles');
       const embedMetadata = store.get('embedMetadata');
       const defaultVideoFormat = store.get('defaultVideoFormat');
+      const defaultAudioFormat = store.get('defaultAudioFormat');
 
       let args: string[] = [];
       //'--progress' flag to get progress updates from yt-dlp
@@ -104,7 +105,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
           quality,
           '--extract-audio',
           '--audio-format',
-          'mp3',
+          defaultAudioFormat,
           '--ffmpeg-location',
           ffmpegPath,
         ];

@@ -31,6 +31,16 @@ const SettingsView = () => {
               { label: 'WebM', value: 'webm' },
             ]}
           />
+          <DropdownSetting
+            settingKey="defaultAudioFormat"
+            label="Default Audio Format"
+            options={[
+              { label: 'MP3', value: 'mp3' },
+              { label: 'M4A', value: 'm4a' },
+              { label: 'FLAC', value: 'flac' },
+              { label: 'Opus', value: 'opus' },
+            ]}
+          />
           <ToggleSetting
             settingKey="embedThumbnails"
             label="Embed Thumbnail in Audio"

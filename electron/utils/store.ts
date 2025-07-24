@@ -8,6 +8,7 @@ type StoreSchema = {
   embedThumbnails: boolean;
   embedMetadata: boolean;
   defaultVideoFormat: string;
+  defaultAudioFormat: string;
 };
 
 const store = new Store<StoreSchema>({
@@ -17,6 +18,7 @@ const store = new Store<StoreSchema>({
     embedThumbnails: true,
     embedMetadata: true,
     defaultVideoFormat: 'mp4',
+    defaultAudioFormat: 'mp3',
   },
 });
 
