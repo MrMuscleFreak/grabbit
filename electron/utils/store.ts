@@ -10,6 +10,7 @@ type StoreSchema = {
   defaultVideoFormat: string;
   defaultAudioFormat: string;
   frameratePreference: string;
+  fileNameTemplate: string;
 };
 
 const store = new Store<StoreSchema>({
@@ -21,6 +22,7 @@ const store = new Store<StoreSchema>({
     defaultVideoFormat: 'mp4',
     defaultAudioFormat: 'mp3',
     frameratePreference: 'auto',
+    fileNameTemplate: '%(title)s.%(ext)s',
   },
 });
 

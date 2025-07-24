@@ -1,5 +1,6 @@
 import DownloadPathSetting from '../components/settings/DownloadPathSetting';
 import DropdownSetting from '../components/settings/DropdownSetting';
+import FileNameSetting from '../components/settings/FileNameSetting';
 import SettingsSection from '../components/settings/SettingsSection';
 import ToggleSetting from '../components/settings/ToggleSetting';
 
@@ -9,15 +10,11 @@ const SettingsView = () => {
       <div className="mx-auto space-y-10">
         <SettingsSection title="File Management">
           <DownloadPathSetting />
+          <FileNameSetting />
           <ToggleSetting
             settingKey="overwriteFiles"
             label="Overwrite Existing Files"
             description="If disabled, new files will be renamed (e.g., 'video (1).mp4')."
-          />
-          <ToggleSetting
-            settingKey="smartRename"
-            label="Smart Rename Downloads"
-            description="If enabled, files will be renamed intelligently (e.g., 'video (1).mp4')."
           />
         </SettingsSection>
 
@@ -65,14 +62,14 @@ const SettingsView = () => {
         </SettingsSection>
 
         {/* TODO: New settings options
-                  - File naming convention
+                  - File naming convention  ✅
                   - Overwrite files ✅
                   - Default media format ✅
                   - Default audio format ✅
                   - auto embed thumbnails ✅
                   - auto embed metadata ✅
                   - frame rate preference ✅
-                  - smart rename downloads 
+                  - smart rename downloads ???
                   - auto check for updates
                   ADVANCED
                   - Debug mode

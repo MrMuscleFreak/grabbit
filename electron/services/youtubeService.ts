@@ -77,7 +77,8 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       const ytdlpPath = getBinaryPath('yt-dlp');
       const ffmpegPath = path.dirname(getBinaryPath('ffmpeg'));
       const downloadPath = store.get('downloadPath');
-      const outputPath = path.join(downloadPath, '%(title)s.%(ext)s');
+      const fileNameTemplate = store.get('fileNameTemplate');
+      const outputPath = path.join(downloadPath, fileNameTemplate);
 
       // settings
       const embedThumbnails = store.get('embedThumbnails');
