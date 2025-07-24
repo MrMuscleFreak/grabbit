@@ -12,6 +12,7 @@ type StoreSchema = {
   frameratePreference: string;
   fileNameTemplate: string;
   customYtdlpArgs: string;
+  debugMode: boolean;
 };
 
 const store = new Store<StoreSchema>({
@@ -25,6 +26,7 @@ const store = new Store<StoreSchema>({
     frameratePreference: 'auto',
     fileNameTemplate: '%(title)s.%(ext)s',
     customYtdlpArgs: '',
+    debugMode: false,
   },
 });
 

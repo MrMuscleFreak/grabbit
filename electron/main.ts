@@ -1,13 +1,26 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import log from 'electron-log/main';
 import { registerYouTubeHandlers } from './services/youtubeService';
 import { registerSettingsHandlers } from './services/settingsService';
+import store from './utils/store';
 
 // services registration
+log.initialize();
 registerYouTubeHandlers(ipcMain);
-registerSettingsHandlers(ipcMain); 
+registerSettingsHandlers(ipcMain);
+
+// Configure logger based on settings
+log.transports.file.level = 'info';
+log.transports.console.level = 'info';
+if (store.get('debugMode')) {
+  log.transports.console.level = 'debug'; // Show debug messages in console
+  log.info('Debug mode enabled. Console logging level set to "debug".');
+}
+
+log.info('App starting...');
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const require = createRequire(import.meta.url);
@@ -80,6 +93,10 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
+});
+
+ipcMain.on('open-log-file', () => {
+  shell.openPath(log.transports.file.getFile().path);
 });
 
 app.whenReady().then(createWindow);

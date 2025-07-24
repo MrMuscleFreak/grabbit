@@ -4,6 +4,7 @@ import { getBinaryPath } from '../utils/binaries';
 import store from '../utils/store';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
+import log from 'electron-log/main';
 
 type PlaylistEntry = {
   id: string;
@@ -20,9 +21,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
     return new Promise((resolve) => {
       execFile(ytdlpPath, args, (error, stdout, stderr) => {
         if (error || stderr) {
-          console.error(
-            `yt-dlp error: ${stderr || (error ? error.message : '')}`
-          );
+          log.error(`yt-dlp error: ${stderr || (error ? error.message : '')}`);
           resolve({ success: false, error: 'Failed to fetch video info.' });
           return;
         }
@@ -57,7 +56,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
             playlistTitle: playlistTitle,
           });
         } catch (e) {
-          console.error('Failed to parse yt-dlp output:', e);
+          log.error('Failed to parse yt-dlp output:', e);
           resolve({ success: false, error: 'Could not parse video data.' });
         }
       });
@@ -142,7 +141,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
         args.push(...customArgsArray);
       }
 
-      console.log('Running yt-dlp command:', ytdlpPath, args);
+      log.log('Running yt-dlp command:', ytdlpPath, args);
       const child = spawn(ytdlpPath, args);
 
       child.stdout.on('data', (data: Buffer) => {
@@ -159,7 +158,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
 
       // Listen for errors
       child.stderr.on('data', (data: Buffer) => {
-        console.error(`yt-dlp stderr: ${data.toString()}`);
+        log.error(`yt-dlp stderr: ${data.toString()}`);
       });
 
       // Listen for the process to close

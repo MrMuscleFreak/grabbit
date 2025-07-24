@@ -2,6 +2,7 @@ import DownloadPathSetting from '../components/settings/DownloadPathSetting';
 import DropdownSetting from '../components/settings/DropdownSetting';
 import FileNameSetting from '../components/settings/FileNameSetting';
 import SettingsSection from '../components/settings/SettingsSection';
+import ShowLogFiles from '../components/settings/ShowLogFiles';
 import TextAreaSetting from '../components/settings/TextAreaSettings';
 import ToggleSetting from '../components/settings/ToggleSetting';
 
@@ -62,11 +63,17 @@ const SettingsView = () => {
           />
         </SettingsSection>
         <SettingsSection title="Advanced">
+          <ToggleSetting
+            settingKey="debugMode"
+            label="Debug Mode"
+            description="Enables verbose logging and additional debug features saved in the log files."
+          />
           <TextAreaSetting
             settingKey="customYtdlpArgs"
             label="Custom yt-dlp Args"
             description="Additional arguments to pass to yt-dlp. Separate multiple arguments with spaces."
           />
+          <ShowLogFiles />
         </SettingsSection>
 
         {/* TODO: New settings options
@@ -80,7 +87,7 @@ const SettingsView = () => {
                   - smart rename downloads ???
                   - auto check for updates
                   ADVANCED
-                  - Debug mode
+                  - Debug mode ✅
                   - Enable Verbose yt-dlp Logging
                   - Custom yt-dlp Args ✅
                   -
