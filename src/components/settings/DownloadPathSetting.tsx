@@ -27,7 +27,7 @@ const DownloadPathSetting = () => {
     <div>
       <label
         htmlFor="downloadPath"
-        className="block text-base font-medium text-white mb-2"
+        className="block text-base font-medium text-slate-300 mb-2"
       >
         Default Download Path
       </label>
@@ -38,7 +38,7 @@ const DownloadPathSetting = () => {
           id="downloadPath"
           value={downloadPath}
           readOnly
-          className="w-full py-2 pl-3 pr-10 bg-slate-800 border border-slate-600 rounded-md cursor-default text-slate-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+          className="w-full py-2 pl-3 pr-10 bg-slate-800 border border-slate-600 rounded-md cursor-default text-slate-500 focus:ring-2 focus:ring-purple-500 focus:outline-none"
         />
         <button
           onClick={handleSelectDirectory}
