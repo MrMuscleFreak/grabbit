@@ -85,6 +85,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       const embedMetadata = store.get('embedMetadata');
       const defaultVideoFormat = store.get('defaultVideoFormat');
       const defaultAudioFormat = store.get('defaultAudioFormat');
+      const frameratePreference = store.get('frameratePreference');
 
       let args: string[] = [];
       //'--progress' flag to get progress updates from yt-dlp
@@ -96,6 +97,14 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
 
       if (embedMetadata) {
         commonArgs.push('--add-metadata');
+      }
+
+      if (
+        format !== 'mp3' &&
+        frameratePreference &&
+        frameratePreference !== 'auto'
+      ) {
+        commonArgs.push('--match-filter', `fps = ${frameratePreference}`);
       }
 
       if (format === 'mp3') {

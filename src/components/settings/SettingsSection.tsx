@@ -11,7 +11,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
 }) => {
   // This allows the `divide-y` utility to work correctly.
   const wrappedChildren = React.Children.map(children, (child, index) => (
-    <div key={index} className="px-4 py-5">
+    <div key={index} className="p-4">
       {child}
     </div>
   ));

@@ -9,6 +9,7 @@ type StoreSchema = {
   embedMetadata: boolean;
   defaultVideoFormat: string;
   defaultAudioFormat: string;
+  frameratePreference: string;
 };
 
 const store = new Store<StoreSchema>({
@@ -19,6 +20,7 @@ const store = new Store<StoreSchema>({
     embedMetadata: true,
     defaultVideoFormat: 'mp4',
     defaultAudioFormat: 'mp3',
+    frameratePreference: 'auto',
   },
 });
 
