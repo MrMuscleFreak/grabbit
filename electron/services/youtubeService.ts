@@ -79,9 +79,17 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       const downloadPath = store.get('downloadPath');
       const outputPath = path.join(downloadPath, '%(title)s.%(ext)s');
 
+      // Switch settings
+      const embedThumbnails = store.get('embedThumbnails');
+      const overwriteFiles = store.get('overwriteFiles');
+
       let args: string[] = [];
       //'--progress' flag to get progress updates from yt-dlp
       const commonArgs = [url, '--progress', '-o', outputPath, '-4'];
+
+      if (overwriteFiles) {
+        commonArgs.push('--force-overwrites');
+      }
 
       if (format === 'mp3') {
         args = [
@@ -94,6 +102,11 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
           '--ffmpeg-location',
           ffmpegPath,
         ];
+
+        // Add thumbnail embed arg only for audio files
+        if (embedThumbnails) {
+          args.push('--embed-thumbnail');
+        }
       } else {
         args = [
           ...commonArgs,
@@ -106,6 +119,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
         ];
       }
 
+      console.log('Running yt-dlp command:', ytdlpPath, args);
       const child = spawn(ytdlpPath, args);
 
       child.stdout.on('data', (data: Buffer) => {
