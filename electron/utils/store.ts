@@ -7,6 +7,7 @@ type StoreSchema = {
   overwriteFiles: boolean;
   embedThumbnails: boolean;
   embedMetadata: boolean;
+  defaultVideoFormat: string;
 };
 
 const store = new Store<StoreSchema>({
@@ -15,6 +16,7 @@ const store = new Store<StoreSchema>({
     overwriteFiles: false,
     embedThumbnails: true,
     embedMetadata: true,
+    defaultVideoFormat: 'mp4',
   },
 });
 

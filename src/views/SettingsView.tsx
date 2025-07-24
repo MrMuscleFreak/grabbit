@@ -1,4 +1,5 @@
 import DownloadPathSetting from '../components/settings/DownloadPathSetting';
+import DropdownSetting from '../components/settings/DropdownSetting';
 import SettingsSection from '../components/settings/SettingsSection';
 import ToggleSetting from '../components/settings/ToggleSetting';
 
@@ -21,6 +22,15 @@ const SettingsView = () => {
         </SettingsSection>
 
         <SettingsSection title="Media & Formats">
+          <DropdownSetting
+            settingKey="defaultVideoFormat"
+            label="Default Video Format"
+            options={[
+              { label: 'MP4', value: 'mp4' },
+              { label: 'MKV', value: 'mkv' },
+              { label: 'WebM', value: 'webm' },
+            ]}
+          />
           <ToggleSetting
             settingKey="embedThumbnails"
             label="Embed Thumbnail in Audio"

@@ -3,7 +3,7 @@ import { IoIosInformationCircleOutline } from 'react-icons/io';
 type ToggleSettingProps = {
   settingKey: string;
   label: string;
-  description: string;
+  description?: string;
 };
 
 const ToggleSetting = ({
@@ -50,12 +50,14 @@ const ToggleSetting = ({
             }`}
           />
         </button>
-        <div className="relative flex items-center group">
-          <IoIosInformationCircleOutline className="text-slate-300 text-2xl" />
-          <div className="absolute bottom-full right-0 z-10 mb-2 w-60 p-2 bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-            {description}
+        {description && (
+          <div className="relative flex items-center group">
+            <IoIosInformationCircleOutline className="text-slate-300 text-2xl" />
+            <div className="absolute bottom-full right-0 z-10 mb-2 w-60 p-2 bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+              {description}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

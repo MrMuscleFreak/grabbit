@@ -79,10 +79,11 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       const downloadPath = store.get('downloadPath');
       const outputPath = path.join(downloadPath, '%(title)s.%(ext)s');
 
-      // Switch settings
+      // settings
       const embedThumbnails = store.get('embedThumbnails');
       const overwriteFiles = store.get('overwriteFiles');
       const embedMetadata = store.get('embedMetadata');
+      const defaultVideoFormat = store.get('defaultVideoFormat');
 
       let args: string[] = [];
       //'--progress' flag to get progress updates from yt-dlp
@@ -118,7 +119,7 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
           '-f',
           quality,
           '--merge-output-format',
-          'mp4',
+          defaultVideoFormat,
           '--ffmpeg-location',
           ffmpegPath,
         ];
