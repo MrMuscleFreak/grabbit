@@ -1,5 +1,5 @@
 import Sidebar from './components/Sidebar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import YouTubeView from './views/YouTubeView';
 import InstagramView from './views/InstagramView';
 import TikTokView from './views/TikTokView';
@@ -11,6 +11,26 @@ import SettingsView from './views/SettingsView';
 function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [activeLink, setActiveLink] = useState('YouTube');
+  const [versions, setVersions] = useState({
+    app: 'Checking...',
+    ytdlp: 'Checking...',
+    ffmpeg: 'Checking...',
+  });
+
+  useEffect(() => {
+    const fetchVersions = async () => {
+      try {
+        const allVersions = await window.ipcRenderer.invoke('get-versions');
+        if (allVersions) {
+          setVersions(allVersions);
+        }
+      } catch (error) {
+        console.error('Failed to fetch versions:', error);
+        setVersions({ app: 'N/A', ytdlp: 'N/A', ffmpeg: 'N/A' });
+      }
+    };
+    fetchVersions();
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -33,7 +53,7 @@ function App() {
       case 'Videos':
         return <ConvertView />;
       case 'Settings':
-        return <SettingsView />;
+        return <SettingsView versions={versions}/>;
       default:
         return <YouTubeView />;
     }

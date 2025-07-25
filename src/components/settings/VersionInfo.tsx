@@ -1,32 +1,13 @@
-import { useState, useEffect } from 'react';
-
 type VersionInfoProps = {
   appName: string;
+  versions: {
+    app: string;
+    ytdlp: string;
+    ffmpeg: string;
+  };
 };
 
-const VersionInfo = ({ appName }: VersionInfoProps) => {
-  const [versions, setVersions] = useState({
-    app: 'Checking...',
-    ytdlp: 'Checking...',
-    ffmpeg: 'Checking...',
-  });
-
-  useEffect(() => {
-    const fetchVersions = async () => {
-      try {
-        const allVersions = await window.ipcRenderer.invoke('get-versions');
-        if (allVersions) {
-          setVersions(allVersions);
-        }
-      } catch (error) {
-        console.error('Failed to fetch versions:', error);
-        // Set versions to 'N/A' on error to indicate failure
-        setVersions({ app: 'N/A', ytdlp: 'N/A', ffmpeg: 'N/A' });
-      }
-    };
-    fetchVersions();
-  }, []);
-
+const VersionInfo = ({ appName, versions }: VersionInfoProps) => {
   return (
     <div className="space-y-2 text-sm text-slate-400">
       <div className="flex justify-between">

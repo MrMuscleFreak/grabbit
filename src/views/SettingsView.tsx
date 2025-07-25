@@ -7,7 +7,17 @@ import TextAreaSetting from '../components/settings/TextAreaSettings';
 import ToggleSetting from '../components/settings/ToggleSetting';
 import VersionInfo from '../components/settings/VersionInfo';
 
-const SettingsView = () => {
+type Versions = {
+  app: string;
+  ytdlp: string;
+  ffmpeg: string;
+};
+
+type SettingsViewProps = {
+  versions: Versions;
+};
+
+const SettingsView = ({ versions }: SettingsViewProps) => {
   return (
     <div className=" w-2xl p-4 py-10 text-white h-full overflow-y-auto">
       <div className="mx-auto space-y-10">
@@ -95,7 +105,7 @@ const SettingsView = () => {
           <ShowLogFiles />
         </SettingsSection>
 
-        <VersionInfo appName="Grabbit" />
+        <VersionInfo appName="Grabbit" versions={versions} />
 
         {/* TODO: New settings options
                   - Multiple downloads at once selector
