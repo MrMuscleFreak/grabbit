@@ -41,6 +41,16 @@ const SettingsView = () => {
               { label: 'Opus', value: 'opus' },
             ]}
           />
+          <DropdownSetting
+            settingKey="defaultImageFormat"
+            label="Default Image Format"
+            options={[
+              { label: 'JPEG', value: 'jpg' },
+              { label: 'PNG', value: 'png' },
+              { label: 'WebP', value: 'webp' },
+              { label: 'AVIF', value: 'avif' },
+            ]}
+          />
           <ToggleSetting
             settingKey="embedThumbnails"
             label="Embed Thumbnail in Audio"

@@ -9,6 +9,7 @@ type StoreSchema = {
   embedMetadata: boolean;
   defaultVideoFormat: string;
   defaultAudioFormat: string;
+  defaultImageFormat: string;
   frameratePreference: string;
   fileNameTemplate: string;
   customYtdlpArgs: string;
@@ -24,6 +25,7 @@ const store = new Store<StoreSchema>({
     embedMetadata: true,
     defaultVideoFormat: 'mp4',
     defaultAudioFormat: 'mp3',
+    defaultImageFormat: 'jpg',
     frameratePreference: 'auto',
     fileNameTemplate: '%(title)s.%(ext)s',
     customYtdlpArgs: '',

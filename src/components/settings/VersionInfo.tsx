@@ -6,9 +6,9 @@ type VersionInfoProps = {
 
 const VersionInfo = ({ appName }: VersionInfoProps) => {
   const [versions, setVersions] = useState({
-    app: '...',
-    ytdlp: '...',
-    ffmpeg: '...',
+    app: 'Checking...',
+    ytdlp: 'Checking...',
+    ffmpeg: 'Checking...',
   });
 
   useEffect(() => {
