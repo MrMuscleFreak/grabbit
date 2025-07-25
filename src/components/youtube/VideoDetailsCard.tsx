@@ -1,6 +1,7 @@
 import { FaDownload, FaMusic, FaVideo } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import ThumbnailDownloadButton from './ThumbnailDownloadButton';
 
 type VideoDetails = {
   id: string;
@@ -48,6 +49,13 @@ const VideoDetailsCard = ({
     onDownload(selectedQuality, format);
   };
 
+  const handleThumbnailDownload = () => {
+    window.ipcRenderer.send('download-thumbnail', {
+      thumbnailUrl: details.thumbnail,
+      title: details.title,
+    });
+  };
+
   if (isListItem) {
     return (
       <motion.div
@@ -62,6 +70,10 @@ const VideoDetailsCard = ({
             src={details.thumbnail}
             alt={details.title}
             className="w-32 h-20 object-cover rounded-lg"
+          />
+          <ThumbnailDownloadButton
+            onDownload={handleThumbnailDownload}
+            size="small"
           />
           {downloadStatus === 'downloading' && (
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-lg">
@@ -111,16 +123,17 @@ const VideoDetailsCard = ({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 30, scale: 1 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="mt-8 w-full max-w-2xl bg-slate-800/70 border border-slate-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+      className="mt-8 w-full max-w-2xl bg-slate-800/70 border border-slate-700 rounded-2xl shadow-2xl flex flex-col"
     >
       <div className="flex gap-8 p-5">
         {/* Left Column */}
-        <div className="w-3/5 flex-shrink-0">
+        <div className="w-3/5 flex-shrink-0 relative">
           <img
             src={details.thumbnail}
             alt="Video Thumbnail"
             className="w-full h-auto rounded-xl object-cover shadow-lg"
           />
+          <ThumbnailDownloadButton onDownload={handleThumbnailDownload} />
           <h2 className="text-xl font-bold text-white mt-4 leading-tight">
             {details.title}
           </h2>
@@ -240,7 +253,7 @@ const VideoDetailsCard = ({
         {(downloadStatus === 'idle' || downloadStatus === 'failed') && (
           <button
             onClick={handleDownloadClick}
-            className="w-full h-12 bg-purple-600 text-white font-bold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-lg"
+            className="w-full h-12 bg-purple-600 text-white font-bold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-lg rounded-xl"
           >
             <FaDownload />
             {downloadStatus === 'failed' ? 'Try Again' : 'Download'}

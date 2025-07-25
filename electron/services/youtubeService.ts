@@ -5,6 +5,8 @@ import store from '../utils/store';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import log from 'electron-log/main';
+import https from 'https';
+import { createWriteStream, WriteStream } from 'fs';
 
 type PlaylistEntry = {
   id: string;
@@ -20,9 +22,15 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
 
     return new Promise((resolve) => {
       execFile(ytdlpPath, args, (error, stdout, stderr) => {
-        if (error || stderr) {
-          log.error(`yt-dlp error: ${stderr || (error ? error.message : '')}`);
-          resolve({ success: false, error: 'Failed to fetch video info.' });
+        if (stderr && !error) {
+          log.warn(`yt-dlp warning: ${stderr}`);
+        }
+        if (error) {
+          log.error(`yt-dlp execution error: ${error.message}`);
+          const errorMessage = stderr
+            ? `Failed to fetch video info. Details: ${stderr}`
+            : 'Failed to fetch video info.';
+          resolve({ success: false, error: errorMessage });
           return;
         }
         try {
@@ -186,6 +194,39 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
           });
         }
       });
+    }
+  );
+
+  ipcMain.on(
+    'download-thumbnail',
+    async (
+      _,
+      { thumbnailUrl, title }: { thumbnailUrl: string; title: string }
+    ) => {
+      const downloadPath = store.get('downloadPath');
+      // Sanitize the title to create a safe filename
+      const sanitizedTitle = title.replace(/[/\\?%*:|"<>]/g, '-');
+      const filePath = path.join(
+        downloadPath,
+        `${sanitizedTitle}_thumbnail.jpg`
+      );
+
+      const fileStream = createWriteStream(filePath);
+      https
+        .get(
+          thumbnailUrl,
+          (response: { pipe: (arg0: WriteStream) => void }) => {
+            response.pipe(fileStream);
+            fileStream.on('finish', () => {
+              fileStream.close();
+              log.info(`Thumbnail downloaded successfully: ${filePath}`);
+              // Optional: You could send a success notification back to the renderer here
+            });
+          }
+        )
+        .on('error', (err: unknown) => {
+          log.error('Failed to download thumbnail:', err);
+        });
     }
   );
 }

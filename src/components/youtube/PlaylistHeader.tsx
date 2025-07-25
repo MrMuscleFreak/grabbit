@@ -37,6 +37,14 @@ const PlaylistHeader = ({
     onDownloadAll(selectedQuality, format);
   };
 
+  const handleThumbnailDownload = () => {
+    if (!thumbnailUrl) return;
+    window.ipcRenderer.send('download-thumbnail', {
+      thumbnailUrl: thumbnailUrl,
+      title: playlistTitle,
+    });
+  };
+
   const currentQualities =
     activeTab === 'video' ? videoQualities : audioQualities;
 
@@ -45,12 +53,19 @@ const PlaylistHeader = ({
       <div className="p-4 flex gap-4">
         {/* Left Column: Thumbnail */}
         {thumbnailUrl && (
-          <div className="w-1/3 flex-shrink-0">
+          <div className="w-1/3 flex-shrink-0 relative group">
             <img
               src={thumbnailUrl}
               alt={`${playlistTitle} thumbnail`}
               className="w-full h-auto object-cover rounded-lg shadow-lg"
             />
+            <button
+              onClick={handleThumbnailDownload}
+              className="absolute top-2 left-2 z-10 p-2 bg-slate-900/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-purple-600"
+              title="Download thumbnail"
+            >
+              <FaDownload className="w-4 h-4" />
+            </button>
           </div>
         )}
 
