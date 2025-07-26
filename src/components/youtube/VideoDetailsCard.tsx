@@ -233,14 +233,14 @@ const VideoDetailsCard = ({
       {/* Download Status Bar */}
       <div className="w-full mt-auto">
         {downloadStatus === 'downloading' && (
-          <div className="relative w-full h-12 bg-slate-700">
+          <div className="relative w-full h-12 bg-slate-700 rounded-xl">
             <motion.div
-              className="absolute top-0 left-0 h-full bg-purple-600"
+              className="absolute top-0 left-0 h-full bg-purple-600 rounded-2xl"
               initial={{ width: 0 }}
               animate={{ width: `${downloadProgress}%` }}
               transition={{ duration: 0.1 }}
             ></motion.div>
-            <div className="absolute inset-0 flex items-center justify-center text-white font-bold">
+            <div className="absolute inset-0 flex items-center justify-center text-white font-bold rounded-2xl">
               Downloading... {downloadProgress.toFixed(0)}%
             </div>
           </div>
