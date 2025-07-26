@@ -204,11 +204,12 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
       { thumbnailUrl, title }: { thumbnailUrl: string; title: string }
     ) => {
       const downloadPath = store.get('downloadPath');
+      const imageFormat = store.get('defaultImageFormat', 'jpg');
       // Sanitize the title to create a safe filename
       const sanitizedTitle = title.replace(/[/\\?%*:|"<>]/g, '-');
       const filePath = path.join(
         downloadPath,
-        `${sanitizedTitle}_thumbnail.jpg`
+        `${sanitizedTitle}_thumbnail.${imageFormat}`
       );
 
       const fileStream = createWriteStream(filePath);
@@ -220,7 +221,6 @@ export function registerYouTubeHandlers(ipcMain: IpcMain) {
             fileStream.on('finish', () => {
               fileStream.close();
               log.info(`Thumbnail downloaded successfully: ${filePath}`);
-              // Optional: You could send a success notification back to the renderer here
             });
           }
         )
