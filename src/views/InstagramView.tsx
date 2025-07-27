@@ -12,7 +12,7 @@ const InstagramView = () => {
       fetchIpcChannel="get-instagram-info"
       downloadIpcChannel="download-youtube-media" // Can be reused or changed
       urlValidationRegex={
-        /^(https?:\/\/)?(www\.)?instagram\.com\/(p|reel|tv)\/.+$/
+        /^(https?:\/\/)?(www\.)?instagram\.com\/(p|reel|reels|tv)\/.+$/
       }
       urlValidationError="This link doesn’t appear to be from Instagram. If you're unsure, please use the 'Other' category."
       mediaListTitle="Media in Post"

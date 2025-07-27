@@ -8,10 +8,13 @@ import { registerSettingsHandlers } from './services/settingsService';
 import store from './utils/store';
 import { execFile } from 'node:child_process';
 import { getBinaryPath } from './utils/binaries';
+import { registerInstagramHandlers } from './services/instagramService';
 
 // services registration
 log.initialize();
+
 registerYouTubeHandlers(ipcMain);
+registerInstagramHandlers(ipcMain);
 registerSettingsHandlers(ipcMain);
 
 // Configure logger based on settings
