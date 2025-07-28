@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { createRequire } from 'node:module';
+import { session } from 'electron';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import log from 'electron-log/main';
@@ -144,4 +145,17 @@ ipcMain.handle('get-versions', async () => {
   }
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  // Configure session to handle Instagram images
+  session.defaultSession.webRequest.onBeforeSendHeaders(
+    { urls: ['https://*.fbcdn.net/*', 'https://*.cdninstagram.com/*'] },
+    (details: Electron.OnBeforeSendHeadersListenerDetails, callback) => {
+      details.requestHeaders['User-Agent'] =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36';
+      details.requestHeaders['Referer'] = 'https://www.instagram.com/';
+      callback({ requestHeaders: details.requestHeaders });
+    }
+  );
+
+  createWindow();
+});
