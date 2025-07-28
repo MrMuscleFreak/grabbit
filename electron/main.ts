@@ -10,10 +10,12 @@ import store from './utils/store';
 import { execFile } from 'node:child_process';
 import { getBinaryPath } from './utils/binaries';
 import { registerInstagramHandlers } from './services/instagramService';
+import { registerTikTokHandlers } from './services/tiktokService';
 
 // services registration
 log.initialize();
 
+registerTikTokHandlers(ipcMain);
 registerYouTubeHandlers(ipcMain);
 registerInstagramHandlers(ipcMain);
 registerSettingsHandlers(ipcMain);
