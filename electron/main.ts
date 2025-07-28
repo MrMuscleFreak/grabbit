@@ -12,19 +12,12 @@ import { getBinaryPath } from './utils/binaries';
 import { registerInstagramHandlers } from './services/instagramService';
 import { registerTikTokHandlers } from './services/tiktokService';
 
-// services registration
+// Configure logger based on settings - this can stay at the top
 log.initialize();
-
-registerTikTokHandlers(ipcMain);
-registerYouTubeHandlers(ipcMain);
-registerInstagramHandlers(ipcMain);
-registerSettingsHandlers(ipcMain);
-
-// Configure logger based on settings
 log.transports.file.level = 'info';
 log.transports.console.level = 'info';
 if (store.get('debugMode')) {
-  log.transports.console.level = 'debug'; // Show debug messages in console
+  log.transports.console.level = 'debug';
   log.info('Debug mode enabled. Console logging level set to "debug".');
 }
 
@@ -103,51 +96,58 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.on('open-log-file', () => {
-  shell.openPath(log.transports.file.getFile().path);
-});
-
-// Replace the old 'get-app-version' handler with this one
-ipcMain.handle('get-versions', async () => {
-  const ytdlpPath = getBinaryPath('yt-dlp');
-  const ffmpegPath = getBinaryPath('ffmpeg');
-
-  const getVersion = (path: string, args: string[]): Promise<string> => {
-    return new Promise((resolve) => {
-      execFile(path, args, (error, stdout) => {
-        if (error) {
-          resolve('N/A');
-          return;
-        }
-        // ffmpeg version is on the first line
-        resolve(stdout.split('\n')[0]);
-      });
-    });
-  };
-
-  try {
-    const [ytdlpVersion, ffmpegVersionOutput] = await Promise.all([
-      getVersion(ytdlpPath, ['--version']),
-      getVersion(ffmpegPath, ['-version']),
-    ]);
-
-    // Extract just the version number from ffmpeg's output
-    const ffmpegVersionMatch = ffmpegVersionOutput.match(
-      /ffmpeg version ([\d.]+)/
-    );
-    const ffmpegVersion = ffmpegVersionMatch ? ffmpegVersionMatch[1] : 'N/A';
-
-    return {
-      app: app.getVersion(), // Use app.getVersion() here
-      ytdlp: ytdlpVersion.trim(),
-      ffmpeg: ffmpegVersion,
-    };
-  } catch (e) {
-    return { app: app.getVersion(), ytdlp: 'N/A', ffmpeg: 'N/A' };
-  }
-});
-
+// Move all IPC handlers and service registration here
 app.whenReady().then(() => {
+  // MOVE ALL SERVICE REGISTRATION HERE - this ensures handlers are registered after app is ready
+  registerTikTokHandlers(ipcMain);
+  registerYouTubeHandlers(ipcMain);
+  registerInstagramHandlers(ipcMain);
+  registerSettingsHandlers(ipcMain);
+
+  // Register other IPC handlers
+  ipcMain.on('open-log-file', () => {
+    shell.openPath(log.transports.file.getFile().path);
+  });
+
+  ipcMain.handle('get-versions', async () => {
+    const ytdlpPath = getBinaryPath('yt-dlp');
+    const ffmpegPath = getBinaryPath('ffmpeg');
+
+    const getVersion = (path: string, args: string[]): Promise<string> => {
+      return new Promise((resolve) => {
+        execFile(path, args, (error, stdout) => {
+          if (error) {
+            resolve('N/A');
+            return;
+          }
+          // ffmpeg version is on the first line
+          resolve(stdout.split('\n')[0]);
+        });
+      });
+    };
+
+    try {
+      const [ytdlpVersion, ffmpegVersionOutput] = await Promise.all([
+        getVersion(ytdlpPath, ['--version']),
+        getVersion(ffmpegPath, ['-version']),
+      ]);
+
+      // Extract just the version number from ffmpeg's output
+      const ffmpegVersionMatch = ffmpegVersionOutput.match(
+        /ffmpeg version ([\d.]+)/
+      );
+      const ffmpegVersion = ffmpegVersionMatch ? ffmpegVersionMatch[1] : 'N/A';
+
+      return {
+        app: app.getVersion(),
+        ytdlp: ytdlpVersion.trim(),
+        ffmpeg: ffmpegVersion,
+      };
+    } catch (e) {
+      return { app: app.getVersion(), ytdlp: 'N/A', ffmpeg: 'N/A' };
+    }
+  });
+
   // Configure session to handle Instagram images
   session.defaultSession.webRequest.onBeforeSendHeaders(
     { urls: ['https://*.fbcdn.net/*', 'https://*.cdninstagram.com/*'] },
