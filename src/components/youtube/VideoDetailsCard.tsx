@@ -66,11 +66,13 @@ const VideoDetailsCard = ({
         className="w-full max-w-2xl flex items-center gap-4 p-3 bg-slate-800/70 border border-slate-700 rounded-xl"
       >
         <div className="relative flex-shrink-0">
-          <img
-            src={details.thumbnail}
-            alt={details.title}
-            className="w-32 h-20 object-cover rounded-lg"
-          />
+          <div className="w-32 h-20 bg-black rounded-lg overflow-hidden">
+            <img
+              src={details.thumbnail}
+              alt="Video Thumbnail"
+              className="w-full h-full object-contain"
+            />
+          </div>
           <ThumbnailDownloadButton
             onDownload={handleThumbnailDownload}
             size="small"
@@ -128,11 +130,13 @@ const VideoDetailsCard = ({
       <div className="flex gap-8 p-5">
         {/* Left Column */}
         <div className="w-3/5 flex-shrink-0 relative">
-          <img
-            src={details.thumbnail}
-            alt="Video Thumbnail"
-            className="w-full h-auto rounded-xl object-cover shadow-lg"
-          />
+          <div className="w-full aspect-video bg-black rounded-xl overflow-hidden">
+            <img
+              src={details.thumbnail}
+              alt="Video Thumbnail"
+              className="w-full h-full object-contain rounded-xl shadow-lg"
+            />
+          </div>
           <ThumbnailDownloadButton onDownload={handleThumbnailDownload} />
           <h2 className="text-xl font-bold text-white mt-4 leading-tight">
             {details.title}

@@ -58,26 +58,36 @@ export function registerInstagramHandlers(ipcMain: IpcMain) {
           const videos = [];
           let postTitle = null;
 
+          // Extract username from title
+          const extractUsername = (title: string | undefined): string => {
+            if (!title) return 'Unknown';
+            const match = title.match(/Post by (.+)/);
+            return match ? match[1] : 'Unknown';
+          };
+
           // Instagram carousels with multiple video items are treated as playlists by yt-dlp
           if (data._type === 'playlist') {
-            postTitle = data.title || `Post by ${data.uploader || 'Unknown'}`;
+            const username = extractUsername(data.title);
+            postTitle = data.title || `Post by ${username}`;
             videos.push(
-              ...data.entries.map((entry: InstagramPlaylistEntry) => ({
-                id: entry.id,
-                title:
-                  entry.title || `Media from ${data.uploader || 'Unknown'}`,
-                channel: data.uploader || 'Unknown',
-                thumbnail: entry.thumbnail || data.thumbnail,
-                url: entry.url,
-              }))
+              ...data.entries.map(
+                (entry: InstagramPlaylistEntry, index: number) => ({
+                  id: entry.id,
+                  title: entry.title || `Video ${index + 1}`,
+                  channel: username,
+                  thumbnail: entry.thumbnail || data.thumbnail,
+                  url: entry.url,
+                })
+              )
             );
           } else {
             // Single video post
-            postTitle = data.title || `Post by ${data.uploader || 'Unknown'}`;
+            const username = extractUsername(data.title);
+            postTitle = data.title || `Post by ${username}`;
             videos.push({
               id: data.id,
-              title: data.title || `Media from ${data.uploader || 'Unknown'}`,
-              channel: data.uploader || 'Unknown',
+              title: data.title || `Media from ${username}`,
+              channel: username,
               thumbnail: data.thumbnail,
               url: data.webpage_url,
             });

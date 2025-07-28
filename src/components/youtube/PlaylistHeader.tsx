@@ -54,11 +54,13 @@ const PlaylistHeader = ({
         {/* Left Column: Thumbnail */}
         {thumbnailUrl && (
           <div className="w-1/3 flex-shrink-0 relative group">
-            <img
-              src={thumbnailUrl}
-              alt={`${playlistTitle} thumbnail`}
-              className="w-full h-auto object-cover rounded-lg shadow-lg"
-            />
+            <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
+              <img
+                src={thumbnailUrl}
+                alt={`${playlistTitle} thumbnail`}
+                className="w-full h-full object-contain shadow-lg"
+              />
+            </div>
             <button
               onClick={handleThumbnailDownload}
               className="absolute top-2 left-2 z-10 p-2 bg-slate-900/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-purple-600"
