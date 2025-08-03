@@ -1,30 +1,73 @@
-# React + TypeScript + Vite
+# Grabbit - Media Downloader
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Grabbit is a powerful, cross-platform desktop application made with Electron designed for downloading media content from a wide range of popular platforms. With its intuitive user interface, you can easily save your favorite videos, music, and images directly to your computer. The app also includes a versatile media conversion tool, making it an all-in-one solution for your media needs.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Multi-Platform Support**: Download media from YouTube, Instagram, TikTok, Spotify, and more.
+- **Media Conversion**: Convert your downloaded files into various formats (e.g., MP4, MKV, MP3, FLAC).
+- **User-Friendly Interface**: A clean and modern UI built with React and Tailwind CSS.
+- **Customizable Settings**: Configure default download paths, file formats, and other preferences.
+- **Cross-Platform**: Works on Windows, macOS, and Linux.
 
-## Expanding the ESLint configuration
+## Supported Platforms
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- YouTube (Videos, Playlists, Shorts)
+- Instagram
+- TikTok
+- Spotify
+- [See more...](public/supported_sites.txt)
 
-- Configure the top-level `parserOptions` property like this:
+## Dependencies
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)**: For handling the media downloading process.
+- **[FFmpeg](https://ffmpeg.org/)**: For media conversion and processing.
+
+## 📦 Getting Started
+
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or later recommended)
+- [npm](https://www.npmjs.com/)
+
+### Installation
+
+1.  **Clone the repository:**
+
+    ```sh
+    git clone https://github.com/MrMuscleFreak/grabbit.git
+    cd grabbit
+    ```
+
+2.  **Install dependencies:**
+
+    ```sh
+    npm install
+    ```
+
+3.  **In development mode:**
+
+```sh
+npm run dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## 🏗️ Build
+
+You can build the application for different platforms using the following commands:
+
+- **Build for Windows:**
+  ```sh
+  npm run build:win
+  ```
+- **Build for macOS:**
+  ```sh
+  npm run build:mac
+  ```
+
+The distributable files will be located in the `dist` directory.
+
+## 🖼️ Screenshots
+
+_(Coming Soon)_
